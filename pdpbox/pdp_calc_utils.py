@@ -43,7 +43,7 @@ def _calc_ice_lines(feature_grid, data, model, model_features, n_classes, featur
        
 
     # get predictions for this chunk
-    if type(model) == xgboost.core.Booster:
+    if type(model) == xgb.core.Booster:
         preds = predict(xgb.DMatrix(_data[model_features]))
     else:
         preds = predict(_data[model_features], **predict_kwds)
@@ -86,7 +86,7 @@ def _calc_ice_lines_inter(feature_grids_combo, data, model, model_features, n_cl
     else:
         predict = model.predict_proba
 
-    if type(model) == xgboost.core.Booster:
+    if type(model) == xgb.core.Booster:
         preds = predict(xgb.DMatrix(_data[model_features]))
     else:
         preds = predict(_data[model_features], **predict_kwds)
