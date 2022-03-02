@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 from pdpbox.utils import _get_string, _find_bucket
+import xgboost as xgb
 
 
 def _calc_ice_lines(feature_grid, data, model, model_features, n_classes, feature, feature_type,
@@ -39,9 +40,13 @@ def _calc_ice_lines(feature_grid, data, model, model_features, n_classes, featur
         predict = model.predict
     else:
         predict = model.predict_proba
+       
 
     # get predictions for this chunk
-    preds = predict(_data[model_features], **predict_kwds)
+    if type(model) == xgboost.core.Booster:
+        preds = predict(xgb.DMatrix(_data[model_features]))
+    else:
+        preds = predict(_data[model_features], **predict_kwds)
 
     if n_classes == 0:
         grid_results = pd.DataFrame(preds, columns=[feature_grid])
@@ -81,7 +86,10 @@ def _calc_ice_lines_inter(feature_grids_combo, data, model, model_features, n_cl
     else:
         predict = model.predict_proba
 
-    preds = predict(_data[model_features], **predict_kwds)
+    if type(model) == xgboost.core.Booster:
+        preds = predict(xgb.DMatrix(_data[model_features]))
+    else:
+        preds = predict(_data[model_features], **predict_kwds)
     grid_result = _data[feature_list].copy()
 
     if n_classes == 0:
